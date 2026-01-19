@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Verification Required</h2>
+
+<p>
+    Your therapist account has been created, but it has not yet been verified.
+</p>
+
+<p>
+    An administrator must verify your profile before you can schedule appointments.
+</p>
+
+<p>
+    Please check back later or contact support if this takes too long.
+</p>
+
+<a href="{% url 'appointment_list' %}">← Back to Appointments</a>
+{% endblock %}

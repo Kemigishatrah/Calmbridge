@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home-card">
+
+    <h1>Welcome to Calmbridge</h1>
+
+    <p class="intro-text">
+        Calmbridge is a mental health appointment platform that connects
+        patients with verified therapists in a safe, professional
+        environment.
+    </p>
+
+    <div class="home-image">
+        <img src="{{ MEDIA_URL }}calmbridge_home.jfif" alt="Mental health support">
+    </div>
+
+    <hr>
+
+    {% if user.is_authenticated %}
+        <p>
+            Welcome back, <strong>{{ user.username }}</strong>.
+        </p>
+
+        <a href="{% url 'appointment_list' %}" class="button">
+            Go to My Appointments
+        </a>
+    {% else %}
+        <p>Please log in or create an account to continue.</p>
+
+        <a href="{% url 'login' %}" class="button">Login</a>
+        <a href="{% url 'register' %}" class="button secondary">Register</a>
+    {% endif %}
+
+</div>
+{% endblock %}
+

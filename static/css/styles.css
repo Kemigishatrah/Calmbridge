@@ -1,0 +1,211 @@
+/* Base layout */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #e0e8f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Navigation */
+nav {
+    background-color: #e0d0d0;
+    padding: 15px 30px;
+    border-bottom: 1px solid #ddd;
+}
+
+nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    margin-right: 15px;
+    font-weight: 500;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Page container */
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 6px;
+}
+
+/* Headings */
+h1, h2 {
+    color: #63a1b1;
+}
+
+/* Buttons */
+button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #357abd;
+}
+
+/* Links styled as buttons */
+a.button {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+a.button:hover {
+    background-color: #357abd;
+}
+
+/* Appointment list */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+/* Status badges */
+.status {
+    font-size: 0.85em;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status.SCHEDULED {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status.COMPLETED {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.CANCELLED {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Hero section */
+.hero {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+/* Text side */
+.hero-text {
+    flex: 1;
+}
+
+.hero-text h1 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+}
+
+.hero-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Image side */
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+/* Placeholder box */
+.image-placeholder {
+    width: 100%;
+    max-width: 350px;
+    height: 250px;
+    background-color: #e6ecf3;
+    border: 2px dashed #b5c3d1;
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #5c6b7a;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Secondary button */
+.button.secondary {
+    background-color: #6c757d;
+    margin-left: 10px;
+}
+
+.button.secondary:hover {
+    background-color: #5a6268;
+}
+
+
+/* Home page image */
+.home-image {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.home-image img {
+    width: 100%;
+    max-width: 500px;   /* ✅ perfect client-demo size */
+    height: auto;       /* ✅ keeps aspect ratio */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+/* Home page card */
+.home-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+/* Intro text */
+.intro-text {
+    font-size: 1.1rem;
+    margin: 20px auto 30px;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+/* Image section */
+.home-image {
+    margin: 30px 0;
+}
+
+.home-image img {
+    width: 100%;
+    max-width: auto;
+    height: 400px;;
+    border-radius: 10px;
+}
+
+/* Divider spacing */
+.home-card hr {
+    margin: 35px 0;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+}
