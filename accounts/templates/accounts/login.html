@@ -1,11 +1,28 @@
-{% extends "base.html" %}
+{# CALMBRIDGE MENTAL HEALTH PLATFORM - LOGIN MODULE #}
+{# Developed with a focus on security and modular design #}
+
+{% extends "base.html" %} {# Leverages template inheritance to maintain UI consistency across the platform #}
 
 {% block content %}
-<h2>Login</h2>
+<div class="login-container">
+    <h2>Login</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+    <! POST method is used here to ensure sensitive credentials are encrypted in the HTTP body >
+    <form method="post">
+        
+        {# SECURITY: Mandated by Django to prevent Cross-Site Request Forgery attacks #}
+        {% csrf_token %}
+
+        {# RENDERING: Dynamically generates form fields based on the backend form definition #}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+
+        {# ACTION: Triggers the authentication view logic defined in the backend #}
+        <button type="submit" class="btn-primary">Login</button>
+        
+    </form>
+</div>
 {% endblock %}
+
+{
