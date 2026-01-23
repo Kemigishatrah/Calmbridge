@@ -2,6 +2,8 @@ from django.shortcuts import render
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+
+from accounts.models import User
 from .models import Appointment
 from .forms import AppointmentForm
 
@@ -15,9 +17,13 @@ def appointment_list(request):
             therapist=user.therapistprofile
         )
     else:
-        appointments = Appointment.objects.filter(
-            patient=user.patientprofile
-        )
+        if hasattr(user, 'patientprofile'):
+            patient = user.patientprofile
+        else:
+            # user has no patient profile
+            return redirect('accounts:create_patient_profile')
+
+        appointments = Appointment.objects.filter(patient=patient)
 
     return render(request, 'appointments/list.html', {
         'appointments': appointments
