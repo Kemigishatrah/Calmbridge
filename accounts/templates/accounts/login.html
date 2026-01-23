@@ -1,19 +1,19 @@
-{# CALMBRIDGE MENTAL HEALTH PLATFORM - LOGIN MODULE #}
+{# login module for user authentication #}
 {# Developed with a focus on security and modular design #}
 
-{% extends "base.html" %} {# Leverages template inheritance to maintain UI consistency across the platform #}
+{% extends "base.html" %} 
 
 {% block content %}
 <div class="login-container">
     <h2>Login</h2>
 
-    <! POST method is used here to ensure sensitive credentials are encrypted in the HTTP body >
+    {# POST method is used here to ensure sensitive credentials are encrypted in the HTTP body #}
     <form method="post">
         
         {# SECURITY: Mandated by Django to prevent Cross-Site Request Forgery attacks #}
         {% csrf_token %}
 
-        {# RENDERING: Dynamically generates form fields based on the backend form definition #}
+        
         <div class="form-group">
             {{ form.as_p }}
         </div>
@@ -25,4 +25,26 @@
 </div>
 {% endblock %}
 
-{
+{% block styles %}
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }

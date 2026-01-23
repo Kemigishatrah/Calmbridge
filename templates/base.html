@@ -1,10 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Calmbridge{% endblock %}</title>
+    <title style="color:green;">{% block title %}Calmbridge{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
@@ -48,7 +48,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Calmbridge. All rights reserved.</p>
+        <p>&copy; 2026 Calmbridge. <br>All rights reserved.</p>
     </footer>
 
     {% block extra_js %}{% endblock %}
