@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>My Availability</h2>
+
+<p>
+    Share the times you’re available to meet with clients.
+    Only these times will be bookable.
+</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Date</label><br>
+    <input type="date" name="date" required><br><br>
+
+    <label>Start time</label><br>
+    <input type="time" name="start_time" required><br><br>
+
+    <label>End time</label><br>
+    <input type="time" name="end_time" required><br><br>
+
+    <button type="submit">Add availability</button>
+</form>
+
+<hr>
+
+<h3>Upcoming availability</h3>
+
+{% if slots %}
+    <ul>
+        {% for slot in slots %}
+            <li>
+                {{ slot.date }} —
+                {{ slot.start_time }} to {{ slot.end_time }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No availability added yet.</p>
+{% endif %}
+
+{% endblock %}

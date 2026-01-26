@@ -7,18 +7,19 @@ from .models import User, TherapistProfile, PatientProfile
 def login_view(request):
     form = AuthenticationForm(request, data=request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
+    if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
-        return redirect('appointment_list')
+        return redirect("appointment_list")
 
-    return render(request, 'accounts/login.html', {'form': form})
+    # IMPORTANT: correct template path
+    return render(request, "accounts/login.html", {"form": form})
 
 
 def register_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        role = request.POST.get('role')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        role = request.POST.get("role")
 
         user = User.objects.create_user(
             username=username,
@@ -26,21 +27,20 @@ def register_view(request):
             role=role
         )
 
-        if role == 'THERAPIST':
+        if role == "THERAPIST":
             TherapistProfile.objects.create(
                 user=user,
-                specialization='General'
+                specialization="General"
             )
         else:
             PatientProfile.objects.create(user=user)
 
         login(request, user)
-        return redirect('appointment_list')
+        return redirect("appointment_list")
 
-    return render(request, 'accounts/register.html')
+    return render(request, "accounts/register.html")
 
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
-
+    return redirect("accounts:login")

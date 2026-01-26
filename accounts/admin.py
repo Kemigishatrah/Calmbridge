@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import User, TherapistProfile, PatientProfile
-# USER MODEL ADMINISTRATION
-# Centralized management for all platform accounts (Patients, Therapists, Admins)
+# USER ADMINISTRATION
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     # Optimization: Quick-view of account status and roles directly from the list view
@@ -22,8 +22,6 @@ class TherapistProfileAdmin(admin.ModelAdmin):
     
     # Performance: Using double-underscore notation to search through the related User model
     search_fields = ('user__username',)
-
-
 
 # PATIENT PROFILE ADMINISTRATION
 # Simplified management for individual service seekers

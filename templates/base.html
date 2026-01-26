@@ -12,7 +12,7 @@
 
     <nav class="top-nav">
         <div class="nav-brand">
-            <a href="{% url 'login' %}"><strong>Calmbridge</strong></a>
+            <a href="{% url 'accounts:login' %}"><strong>Calmbridge</strong></a>
         </div>
 
         <div class="nav-links">
@@ -20,16 +20,16 @@
                 <a href="{% url 'appointment_list' %}">Appointments</a>
 
                 {% if user.role == 'THERAPIST' %}
-                    <a href="{% url 'create_appointment' %}" class="btn-schedule">Schedule an Appointment</a>
+                     <a href="{% url 'manage_availability' %}">Manage Availability</a>
                 {% endif %}
 
-                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="link-btn">Logout</button>
                 </form>
             {% else %}
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'register' %}" class="btn-primary">Sign Up</a>
+                <a href="{% url 'accounts:login' %}">Login</a>
+                <a href="{% url 'accounts:register' %}" class="btn-primary">Sign Up</a>
             {% endif %}
         </div>
     </nav>
@@ -41,8 +41,19 @@
                 {{ message }}
             </div>
         {% endfor %}
+
+ {% if user.is_staff %}
+    <a href="{% url 'assign_therapist' %}">Assign Therapists</a>
+{% endif %}
+
     </div>
     {% endif %}
+    {% if user.is_authenticated and user.role == "PATIENT" %}
+    <a href="{% url 'available_sessions' %}">
+        Book a Session
+    </a>
+{% endif %}
+
     <main class="container">
         {% block content %}{% endblock %}
     </main>

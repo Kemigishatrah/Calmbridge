@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Assign Therapist to Client</h2>
+
+<p>
+    Carefully assign a client to a verified therapist.
+    This enables booking and secure communication.
+</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Client</label><br>
+    <select name="patient" required>
+        {% for patient in patients %}
+            <option value="{{ patient.id }}">
+                {{ patient.user.username }}
+            </option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label>Therapist</label><br>
+    <select name="therapist" required>
+        {% for therapist in therapists %}
+            <option value="{{ therapist.id }}">
+                {{ therapist.user.username }} — {{ therapist.specialization }}
+            </option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <button type="submit">Assign Therapist</button>
+</form>
+{% endblock %}

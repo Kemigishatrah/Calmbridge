@@ -1,11 +1,9 @@
 from django import forms
 from .models import Appointment
 
+# appointments/forms.py
 
-class AppointmentForm(forms.ModelForm):
-    class Meta:
-        model = Appointment
-        fields = ['patient', 'scheduled_at']
-        widgets = {
-            'scheduled_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        }
+# This file is intentionally left empty for now.
+# Appointment creation will be handled via availability booking
+# in the next implementation step.
+

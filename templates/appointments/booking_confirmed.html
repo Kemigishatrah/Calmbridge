@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Your Session Is Confirmed</h2>
+
+<p>
+    Your session with
+    <strong>{{ therapist.user.username }}</strong>
+    has been scheduled.
+</p>
+
+<p>
+    <strong>Date:</strong> {{ date }}<br>
+    <strong>Time:</strong> {{ start }} – {{ end }}
+</p>
+
+<p>
+    You will be able to message your therapist before the session.
+</p>
+
+<a href="{% url 'appointment_list' %}">
+    View my appointments
+</a>
+{% endblock %}

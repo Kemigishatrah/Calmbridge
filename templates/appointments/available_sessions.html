@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Available Sessions</h2>
+
+<p>
+    You are currently connected with
+    <strong>{{ therapist.user.username }}</strong>.
+</p>
+
+{% if slots %}
+    <p>Please choose a time that works best for you.</p>
+
+    <ul>
+    {% for slot in slots %}
+        <li>
+            {{ slot.date }} —
+            {{ slot.start_time }} to {{ slot.end_time }}
+            |
+            <a href="{% url 'book_session' slot.id %}">
+                Book this session
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+
+{% else %}
+    <p>
+        There are no available sessions right now.
+        Please check back later.
+    </p>
+{% endif %}
+{% endblock %}

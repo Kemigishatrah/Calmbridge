@@ -1,56 +1,202 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-
-from accounts.models import User
-from .models import Appointment
-from .forms import AppointmentForm
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render
+from .models import Appointment, AvailabilitySlot, TherapistAssignment
+from accounts.models import PatientProfile, TherapistProfile
 
 
 @login_required
 def appointment_list(request):
     user = request.user
 
-    if user.role == 'THERAPIST':
+    if user.role == "THERAPIST":
         appointments = Appointment.objects.filter(
             therapist=user.therapistprofile
         )
-    else:
-        if hasattr(user, 'patientprofile'):
-            patient = user.patientprofile
-        else:
-            # user has no patient profile
-            return redirect('accounts:create_patient_profile')
 
+    elif user.role == "PATIENT":
+        patient, _ = PatientProfile.objects.get_or_create(user=user)
         appointments = Appointment.objects.filter(patient=patient)
 
-    return render(request, 'appointments/list.html', {
-        'appointments': appointments
-    })
+    else:
+        # Admin or any other role
+        appointments = Appointment.objects.none()
+
+    return render(
+        request,
+        "appointments/list.html",
+        {"appointments": appointments}
+    )
+
 
 
 @login_required
-def create_appointment(request):
+def appointment_detail(request, appointment_id):
     user = request.user
 
-    if user.role != 'THERAPIST':
-        return redirect('appointment_list')
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+    except Appointment.DoesNotExist:
+        return redirect('appointments:appointment_list')
 
-    therapist_profile = user.therapistprofile
+    # Ensure the user has permission to view this appointment
+    if user.role == 'THERAPIST' and appointment.therapist.user != user:
+        return redirect('appointments:appointment_list')
+    elif user.role == 'PATIENT' and appointment.patient.user != user:
+        return redirect('appointments:appointment_list')
 
-    if not therapist_profile.is_verified:
-        return render(request, 'appointments/not_verified.html')
+    return render(request, 'appointments/detail.html', {
+        'appointment': appointment
+    })
 
-    if request.method == 'POST':
-        form = AppointmentForm(request.POST)
-        if form.is_valid():
-            appointment = form.save(commit=False)
-            appointment.therapist = therapist_profile
-            appointment.save()
-            return redirect('appointment_list')
-    else:
-        form = AppointmentForm()
+@login_required
+def manage_availability(request):
+    user = request.user
 
-    return render(request, 'appointments/create.html', {'form': form})
+    # Only therapists can access
+    if user.role != "THERAPIST":
+        return redirect("appointment_list")
 
+    therapist = user.therapistprofile
+
+    # Block unverified therapists
+    if not therapist.is_verified:
+        return render(request, "appointments/not_verified.html")
+
+    if request.method == "POST":
+        slot_date = request.POST.get("date")
+        start_time = request.POST.get("start_time")
+        end_time = request.POST.get("end_time")
+
+        AvailabilitySlot.objects.create(
+            therapist=therapist,
+            date=slot_date,
+            start_time=start_time,
+            end_time=end_time
+        )
+
+        return redirect("manage_availability")
+
+    slots = AvailabilitySlot.objects.filter(
+        therapist=therapist,
+        is_active=True
+    )
+
+    return render(
+        request,
+        "appointments/manage_availability.html",
+        {"slots": slots}
+    )
+
+@staff_member_required
+def assign_therapist(request):
+    patients = PatientProfile.objects.all()
+    therapists = TherapistProfile.objects.filter(is_verified=True)
+
+    if request.method == "POST":
+        patient_id = request.POST.get("patient")
+        therapist_id = request.POST.get("therapist")
+
+        patient = PatientProfile.objects.get(id=patient_id)
+        therapist = TherapistProfile.objects.get(id=therapist_id)
+
+        TherapistAssignment.objects.update_or_create(
+            patient=patient,
+            defaults={"therapist": therapist, "is_active": True}
+        )
+
+        return redirect("assign_therapist")
+
+    return render(
+        request,
+        "appointments/assign_therapist.html",
+        {
+            "patients": patients,
+            "therapists": therapists
+        }
+    )
+@login_required
+def available_sessions(request):
+    user = request.user
+
+    # Only patients can access this page
+    if user.role != "PATIENT":
+        return render(request, "appointments/not_allowed.html")
+
+    # Check therapist assignment
+    assignment = TherapistAssignment.objects.filter(
+        patient=user.patientprofile,
+        is_active=True
+    ).first()
+
+    if not assignment:
+        return render(
+            request,
+            "appointments/no_assignment.html"
+        )
+
+    therapist = assignment.therapist
+
+    slots = AvailabilitySlot.objects.filter(
+        therapist=therapist,
+        is_active=True
+    ).order_by("date", "start_time")
+
+    return render(
+        request,
+        "appointments/available_sessions.html",
+        {
+            "therapist": therapist,
+            "slots": slots
+        }
+    )
+@login_required
+def book_session(request, slot_id):
+    user = request.user
+
+    if user.role != "PATIENT":
+        return render(request, "appointments/not_allowed.html")
+
+    assignment = TherapistAssignment.objects.filter(
+        patient=user.patientprofile,
+        is_active=True
+    ).first()
+
+    if not assignment:
+        return render(request, "appointments/no_assignment.html")
+
+    slot = get_object_or_404(
+        AvailabilitySlot,
+        id=slot_id,
+        is_active=True
+    )
+
+    # Ensure slot belongs to assigned therapist
+    if slot.therapist != assignment.therapist:
+        return render(request, "appointments/not_allowed.html")
+
+    # Create appointment
+    Appointment.objects.create(
+        patient=user.patientprofile,
+        therapist=slot.therapist,
+        date=slot.date,
+        start_time=slot.start_time,
+        end_time=slot.end_time
+    )
+
+    # Lock the slot
+    slot.is_active = False
+    slot.save()
+
+    return render(
+        request,
+        "appointments/booking_confirmed.html",
+        {
+            "therapist": slot.therapist,
+            "date": slot.date,
+            "start": slot.start_time,
+            "end": slot.end_time,
+        }
+    )
