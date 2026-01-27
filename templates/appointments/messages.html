@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+  <h2>Session Messages</h2>
+
+  <p class="muted">
+    This conversation is private between you and your therapist.
+  </p>
+
+  <div class="messages-thread">
+    {% for message in messages %}
+      <div class="message-card
+           {% if message.sender == user %}message-own{% endif %}">
+        
+        <div class="message-header">
+          <strong>{{ message.sender.username }}</strong>
+          <span class="muted">
+            {{ message.created_at|date:"M d, Y · H:i" }}
+          </span>
+        </div>
+
+        <div class="message-body">
+          {{ message.content }}
+        </div>
+
+      </div>
+    {% empty %}
+      <div class="notice">
+        <p>No messages yet. You can start the conversation below.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <form method="post" class="message-form">
+    {% csrf_token %}
+    <textarea
+      name="content"
+      rows="3"
+      placeholder="Write a message…"
+      required
+    ></textarea>
+
+    <button type="submit">Send message</button>
+  </form>
+
+</div>
+{% endblock %}

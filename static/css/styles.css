@@ -1,194 +1,227 @@
-/*  GLOBAL*/
+/* CalmBridge Design System */
+
 :root {
-    --primary: #446284;
-    --primary-hover: #f7b85a;
-    --bg-blue: #d1e2fa;
-    --text-dark: #333;
-    --white: #ffffff;
+  --primary: #2f8f9d;        /* calm teal */
+  --primary-dark: #256f7a;
+  --accent: #87dcb7;         /* gentle green */
+  --bg: #dbeffc;
+  --surface: #ffffff;
+  --text-main: #243333;
+  --text-muted: #6b7c7c;
+  --border: #b8d6a2;
+  --danger: #ed7a76;
+  --radius: 10px;
+  --shadow: 0 8px 24px rgba(0,0,0,0.06);
+  --font-main: "Inter", system-ui, -apple-system, sans-serif;
 }
 
-html, body {
-    height: 100%;
+/* Global Styles */
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: var(--bg-blue);
-    margin: 0;
-    padding: 0;
-    color: var(--text-dark);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Ensures the background fills the screen */
+  margin: 0;
+  font-family: var(--font-main);
+  background: var(--bg);
+  color: var(--text-main);
+  line-height: 1.6;
 }
 
-hr {
-    border: none;
-    display:none
+a {
+  color: var(--primary);
+  text-decoration: solid;
+  border: 1px solid var(--border);
 }
-/* 2. NAVIGATION */
+
+a:hover {
+  text-decoration:solid;
+}
+
+/* Layout */
+
+.container {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+h1, h2, h3 {
+  margin-top: 0;
+  color: var(--primary-dark);
+}
+
+/* Navigation */
+
 nav {
-    background-color: #e0d0d0;
-    padding: 15px 30px;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+  background: var(--surface);
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 1.5rem;
 }
 
 nav a {
-    text-decoration: none;
-    color: #2c3e50;
-    margin-right: 15px;
-    font-weight: 500;
-    transition: 0.2s;
+  font-weight: 500;
+  color: var(--text-main);
 }
 
 nav a:hover {
-    text-decoration:none;
-    color: var(--primary);
+  color: var(--primary);
 }
 
-/* 3. PAGE CONTAINER */
-.container {
-    width: 95%; /* Responsive width */
-    max-width: 900px;
-    margin: 40px auto;
-    background: var(--white);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    flex: 1; /* Pushes footer down if content is short */
+/* Forms */
+form {
+  margin-top: 1.5rem;
 }
 
-/* 4. HERO SECTION (Flexbox) */
-.hero {
-    display: flex;
-    gap: 40px;
-    align-items: center;
-    flex-wrap: wrap; /* Allows stacking on mobile */
+label {
+  font-weight: 500;
 }
 
-.hero-text {
-    flex: 1;
-    min-width: 300px; /* Prevents text from getting too squeezed */
+input,
+select,
+textarea {
+  width: 80%;
+  padding: 0.7rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1.2rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-family: inherit;
 }
 
-.hero-text h1 {
-    color: #63a1b1;
-    font-size: 2.2rem;
-    margin-bottom: 15px;
+textarea {
+  resize: vertical;
 }
 
-.hero-text p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 25px;
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
-
-/* 6. BUTTONS */
-button, a.button {
-    background-color: var(--primary);
-    color: rgb(255, 255, 255) !important;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: 0.2s;
-    font-weight: 500;
+/* Buttons */
+button {
+  background: var(--primary);
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  cursor: pointer;
 }
 
-button:hover, a.button:hover {
-    background-color: var(--primary-hover);
+button:hover {
+  background: var(--primary-dark);
 }
 
-.button.secondary {
-    background-color: #6c757d;
-    margin-left: 10px;
+/* lists cards */
+
+.card {
+  padding: 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  background: var(--surface);
 }
 
-.button.secondary:hover {
-    background-color: #5a6268;
+.muted {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
-/* 7. APPOINTMENTS & CARDS */
-.home-card {
-    background: var(--white);
-    padding: 40px;
-    border-radius: 12px;
-    text-align: center;
+/* Messages */
+
+.message {
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 0.8rem;
+  background: #eef6f7;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
+.message strong {
+  color: var(--primary-dark);
 }
 
-li {
-    padding: 15px;
-    margin-bottom: 12px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background: #fafafa;
+/* =========================
+   Messaging
+   ========================= */
+
+.messages-thread {
+  margin: 2rem 0;
 }
 
-/* 8. STATUS BADGES */
+.message-card {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius);
+  background: #eef6f7;
+}
+
+.message-own {
+  background: #e6f4ea;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.message-body {
+  white-space: pre-wrap;
+}
+
+.message-form textarea {
+  margin-top: 1rem;
+}
+.message-form button {
+  margin-top: 0.5rem;
+}
+
+/*Alerts / Info */
+
+.notice {
+  background: #eef6f7;
+  padding: 1rem;
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  margin: 1.5rem 0;
+}
+/*status */
 .status {
-    font-size: 0.85em;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-weight: bold;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
-.status.SCHEDULED { background: #fff3cd; color: #856404; }
-.status.COMPLETED { background: #d4edda; color: #155724; }
-.status.CANCELLED { background: #f8d7da; color: #721c24; }
-
-/* 9. MOBILE RESPONSIVENESS (Media Query) */
-@media (max-width: 768px) {
-    .hero {
-        flex-direction: column; /* Stacks text and image */
-        text-align: center;
-    }
-
-    .container {
-        margin: 20px auto;
-        padding: 20px;
-        width: 90%;
-    }
-
-    .hero-text h1 {
-        font-size: 1.8rem;
-    }
-
-    nav {
-        justify-content: center;
-        gap: 10px;
-    }
+.status.PENDING {
+  background: #fff3cd;
+  color: #856404;
 }
 
-/* 10. LOGIN PAGE STYLES */
-    .login-container {
-        max-width: 400px;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .btn-primary {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
+.status.CONFIRMED {
+  background: #e6f4ea;
+  color: #256f3a;
+}
+
+.status.COMPLETED {
+  background: #eef2f7;
+  color: #445;
+}
+
+.status.CANCELLED {
+  background: #fdecea;
+  color: #a94442;
+}
+.status.RESCHEDULED {
+  background: #e7f3fe;
+  color: #0b61a4;
+}

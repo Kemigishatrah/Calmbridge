@@ -28,12 +28,7 @@ class TherapistProfile(models.Model):
     bio = models.TextField(max_length=1000, blank=True)
 
 
-
-
-
     is_verified = models.BooleanField(default=False)
-
-
 
     def __str__(self):
         return self.user.username
@@ -44,3 +39,4 @@ class PatientProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Session Notes</h2>
+
+<p>
+    These notes are private and visible only to you.
+</p>
+<p class="muted">
+  Appointment:
+  {{ appointment.date }},
+  {{ appointment.start_time }} – {{ appointment.end_time }}
+</p>
+
+
+<form method="post">
+    {% csrf_token %}
+    <textarea
+        name="notes"
+        rows="10"
+        style="width: 100%;"
+        placeholder="Write session notes here…"
+    >{{ note.notes }}</textarea>
+
+    <br><br>
+    <button type="submit">Save notes</button>
+</form>
+
+{% endblock %}

@@ -1,23 +1,65 @@
 {% extends "base.html" %}
 
-<div> {% block content %}
-<h2>My Appointments</h2>
+{% block content %}
+<div class="container">
 
-{% if appointments %}
-    <ul>
-        {% for appointment in appointments %}
-            <li>
-    <strong>{{ appointment.scheduled_at }}</strong>
-    —
-    <span class="status {{ appointment.status }}">
-        {{ appointment.get_status_display }}
-    </span>
-         </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No appointments yet.</p>
-{% endif %}
+  <h2>My Appointments</h2>
 
-{% endblock %}
+  {% if appointments %}
+    {% for appointment in appointments %}
+      <div class="card">
+
+        <h3>
+          Session on {{ appointment.date }}
+        </h3>
+
+        <p class="muted">
+          {{ appointment.start_time }} – {{ appointment.end_time }}
+        </p>
+
+        <!-- Role-aware context -->
+        {% if user.role == "PATIENT" %}
+          <p>
+            <strong>Therapist:</strong>
+            {{ appointment.therapist.user.username }}
+          </p>
+        {% elif user.role == "THERAPIST" %}
+          <p>
+            <strong>Client:</strong>
+            {{ appointment.patient.user.username }}
+          </p>
+        {% endif %}
+
+        <!-- Status -->
+        <p>
+          <strong>Status:</strong>
+          <span class="status {{ appointment.status }}">
+            {{ appointment.get_status_display }}
+          </span>
+        </p>
+
+        <hr>
+
+        <!-- Actions -->
+        <a href="{% url 'appointment_messages' appointment.id %}">
+          View messages
+        </a>
+
+        {% if user.role == "THERAPIST" %}
+          |
+          <a href="{% url 'session_notes' appointment.id %}">
+            Session notes
+          </a>
+        {% endif %}
+
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="notice">
+      <p>You don’t have any appointments yet.</p>
+    </div>
+  {% endif %}
+
 </div>
+{% endblock %}
+

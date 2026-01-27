@@ -70,3 +70,38 @@ class TherapistAssignment(models.Model):
 
     def __str__(self):
         return f"{self.patient} → {self.therapist}"
+    from django.db import models
+
+
+class Message(models.Model):
+    appointment = models.ForeignKey(
+        "Appointment",
+        on_delete=models.CASCADE,
+        related_name="messages"
+    )
+    sender = models.ForeignKey(
+        "accounts.User",
+        on_delete=models.CASCADE
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Message from {self.sender.username}"
+
+class SessionNote(models.Model):
+    appointment = models.OneToOneField(
+        "Appointment",
+        on_delete=models.CASCADE,
+        related_name="session_note"
+    )
+    therapist = models.ForeignKey(
+        "accounts.TherapistProfile",
+        on_delete=models.CASCADE
+    )
+    notes = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Session notes for appointment {self.appointment.id}"

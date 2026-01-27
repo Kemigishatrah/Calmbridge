@@ -1,11 +1,9 @@
 from django.shortcuts import get_object_or_404, redirect, render
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
-from .models import Appointment, AvailabilitySlot, TherapistAssignment
+from .models import Appointment, AvailabilitySlot, SessionNote, TherapistAssignment,Message
 from accounts.models import PatientProfile, TherapistProfile
-
 
 @login_required
 def appointment_list(request):
@@ -198,5 +196,70 @@ def book_session(request, slot_id):
             "date": slot.date,
             "start": slot.start_time,
             "end": slot.end_time,
+        }
+    )
+@login_required
+def appointment_messages(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    user = request.user
+
+    # Access control
+    if user not in [
+        appointment.patient.user,
+        appointment.therapist.user
+    ] and not user.is_staff:
+        return render(request, "appointments/not_allowed.html")
+
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if content:
+            Message.objects.create(
+                appointment=appointment,
+                sender=user,
+                content=content
+            )
+            return redirect("appointment_messages", appointment_id=appointment.id)
+
+    messages = appointment.messages.order_by("created_at")
+
+    return render(
+        request,
+        "appointments/messages.html",
+        {
+            "appointment": appointment,
+            "messages": messages
+        }
+    )
+login_required
+def session_notes(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    user = request.user
+
+    # Therapist-only (admin read-only handled later)
+    if user.role != "THERAPIST":
+        return render(request, "appointments/not_allowed.html")
+
+    therapist = appointment.therapist
+
+    # Ensure therapist owns this appointment
+    if therapist.user != user:
+        return render(request, "appointments/not_allowed.html")
+
+    note, created = SessionNote.objects.get_or_create(
+        appointment=appointment,
+        therapist=therapist
+    )
+
+    if request.method == "POST":
+        note.notes = request.POST.get("notes")
+        note.save()
+        return redirect("session_notes", appointment_id=appointment.id)
+
+    return render(
+        request,
+        "appointments/session_notes.html",
+        {
+            "appointment": appointment,
+            "note": note
         }
     )
