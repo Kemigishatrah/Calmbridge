@@ -25,5 +25,8 @@
     <br><br>
     <button type="submit">Save notes</button>
 </form>
+<a href="{{ request.META.HTTP_REFERER|default:'/' }}">
+  ← Back
+</a>    
 
 {% endblock %}

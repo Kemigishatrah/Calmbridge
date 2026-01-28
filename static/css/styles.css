@@ -117,9 +117,47 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: var(--primary-dark);
+
+.btn-primary {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  text-decoration: none;
 }
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  text-decoration: none;
+}
+
+.btn-secondary {
+  display: inline-block;
+  background: transparent;
+  color: var(--primary);
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background: #eef6f7;
+  text-decoration: none;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
 
 /* lists cards */
 
@@ -148,10 +186,6 @@ button:hover {
 .message strong {
   color: var(--primary-dark);
 }
-
-/* =========================
-   Messaging
-   ========================= */
 
 .messages-thread {
   margin: 2rem 0;
@@ -224,4 +258,20 @@ button:hover {
 .status.RESCHEDULED {
   background: #e7f3fe;
   color: #0b61a4;
+}
+
+/* Back Link */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  color: var(--primary);
+}
+.back-link::before {
+  content: "← ";
+  margin-right: 0.3rem;
 }

@@ -1,23 +1,55 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Register</h2>
+<div class="container">
 
-<form method="post">
+  <h2>Create your account</h2>
+
+  <p class="muted">
+    CalmBridge is a safe space to connect with qualified mental health professionals.
+    Please create an account to continue.
+  </p>
+
+  <!-- Display validation / feedback messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="notice">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
     {% csrf_token %}
 
-    <label>Username</label><br>
-    <input type="text" name="username" required><br><br>
+    <label for="username">Username</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Choose a username"
+      required
+    >
 
-    <label>Password</label><br>
-    <input type="password" name="password" required><br><br>
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Create a secure password"
+      required
+    >
 
-    <label>Role</label><br>
-    <select name="role" required>
-        <option value="PATIENT">Patient</option>
-        <option value="THERAPIST">Therapist</option>
-    </select><br><br>
+    <label for="role">I am registering as</label>
+    <select id="role" name="role" required>
+      <option value="">Select a role</option>
+      <option value="PATIENT">Patient</option>
+      <option value="THERAPIST">Therapist</option>
+    </select>
 
-    <button type="submit">Create Account</button>
-</form>
+    <button type="submit">Create account</button>
+  </form>
+
+</div>
 {% endblock %}
+

@@ -14,6 +14,9 @@ def login_view(request):
     # IMPORTANT: correct template path
     return render(request, "accounts/login.html", {"form": form})
 
+from django.contrib import messages
+from django.db import IntegrityError
+
 
 def register_view(request):
     if request.method == "POST":
@@ -21,12 +24,33 @@ def register_view(request):
         password = request.POST.get("password")
         role = request.POST.get("role")
 
-        user = User.objects.create_user(
-            username=username,
-            password=password,
-            role=role
-        )
+        # Basic validation
+        if not username or not password or not role:
+            messages.error(request, "All fields are required.")
+            return redirect("accounts:register")
 
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(
+                request,
+                "This username is already taken. Please choose another one."
+            )
+            return redirect("accounts:register")
+
+        try:
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                role=role
+            )
+        except IntegrityError:
+            messages.error(
+                request,
+                "Something went wrong. Please try again."
+            )
+            return redirect("accounts:register")
+
+        # Create profile based on role
         if role == "THERAPIST":
             TherapistProfile.objects.create(
                 user=user,
@@ -39,6 +63,7 @@ def register_view(request):
         return redirect("appointment_list")
 
     return render(request, "accounts/register.html")
+
 
 
 def logout_view(request):

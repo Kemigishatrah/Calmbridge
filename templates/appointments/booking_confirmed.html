@@ -21,4 +21,8 @@
 <a href="{% url 'appointment_list' %}">
     View my appointments
 </a>
+<a href="{{ request.META.HTTP_REFERER|default:'/' }}">
+  ← Back
+</a>
+
 {% endblock %}

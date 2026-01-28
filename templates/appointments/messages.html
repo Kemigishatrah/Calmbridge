@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+<a class="back-link" href="{% url 'appointment_list' %}">
+  ← Back to appointments
+</a>
+
 <div class="container">
 
   <h2>Session Messages</h2>
@@ -43,6 +47,10 @@
     ></textarea>
 
     <button type="submit">Send message</button>
+    <a href="{{ request.META.HTTP_REFERER|default:'/' }}">
+  ← Back
+</a>
+
   </form>
 
 </div>

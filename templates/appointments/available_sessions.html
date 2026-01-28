@@ -1,33 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Available Sessions</h2>
+<div class="container">
 
-<p>
+  <h2>Available Sessions</h2>
+
+  <p class="muted">
     You are currently connected with
     <strong>{{ therapist.user.username }}</strong>.
-</p>
+    Please choose a session time that feels right for you.
+  </p>
 
-{% if slots %}
-    <p>Please choose a time that works best for you.</p>
+  {% if slots %}
+    <div>
 
-    <ul>
-    {% for slot in slots %}
-        <li>
-            {{ slot.date }} —
-            {{ slot.start_time }} to {{ slot.end_time }}
-            |
-            <a href="{% url 'book_session' slot.id %}">
-                Book this session
-            </a>
-        </li>
-    {% endfor %}
-</ul>
+      {% for slot in slots %}
+        <div class="card">
 
-{% else %}
-    <p>
-        There are no available sessions right now.
-        Please check back later.
-    </p>
-{% endif %}
+          <h3>
+            {{ slot.date }}
+          </h3>
+
+          <p class="muted">
+            {{ slot.start_time }} – {{ slot.end_time }}
+          </p>
+
+          <p>
+            This session is reserved exclusively for you once booked.
+          </p>
+
+          <a href="{% url 'book_session' slot.id %}">
+            Book this session
+          </a>
+
+        </div>
+      {% endfor %}
+
+    </div>
+  {% else %}
+    <div class="notice">
+      <p>
+        There are no available sessions at the moment.
+        Please check back later — new times are added regularly.
+      </p>
+    </div>
+  {% endif %}
+
+</div>
 {% endblock %}
