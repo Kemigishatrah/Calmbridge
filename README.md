@@ -81,6 +81,8 @@ Architecture: MVC (Model–View–Template)
  Project Structure
 calmbridge/
 ├── manage.py
+├── requirements.txt
+├── .env.example
 ├── calmbridge/
 │   ├── settings.py
 │   ├── urls.py
@@ -88,27 +90,27 @@ calmbridge/
 │
 ├── accounts/
 │   ├── models.py
+│   ├── forms.py
 │   ├── views.py
 │   ├── urls.py
+│   ├── tests.py
 │   └── templates/accounts/
 │
 ├── appointments/
 │   ├── models.py
+│   ├── forms.py
 │   ├── views.py
 │   ├── urls.py
+│   ├── tests.py
 │   └── templates/appointments/
 │
 ├── templates/
 │   ├── base.html
 │   └── home.html
 │
-├── static/
-│   ├── css/
-│   │   └── styles.css
-│   └── js/
-│       └── base.js
-│
-└── venv/
+└── static/
+    └── css/
+        └── styles.css
 
  Installation & Setup   Prerequisites
 •	Python 3.11+
@@ -128,7 +130,15 @@ venv\Scripts\activate   # Windows
 
 Install dependencies
 
-pip install django
+pip install -r requirements.txt
+
+
+Configure environment variables
+
+copy .env.example .env
+REM then edit .env and set a real DJANGO_SECRET_KEY
+REM generate one with:
+REM python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 
 
 Run migrations
@@ -137,18 +147,22 @@ python manage.py makemigrations
 python manage.py migrate
 
 
-
 Start the development server:
 python manage.py runserver
 
 Access the application at:
 http://127.0.0.1:8000/
 
- 
-Future Enhancements
+ Running Tests
 
-Secure therapist–patient messaging
+python manage.py test
+
+ 
+Not Yet Implemented
+
+The following functional requirements are on the roadmap but not built yet:
+•	Password recovery / reset flow
 •	Appointment notifications and reminders
 •	Analytics and reporting dashboards
-•	Deployment to a production environment
+•	Deployment to a production environment (Docker/CI)
 •	Enhanced accessibility and mobile responsiveness

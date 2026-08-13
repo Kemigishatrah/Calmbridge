@@ -1,7 +1,15 @@
-from django.shortcuts import render, redirect
+import logging
+
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .models import User, TherapistProfile, PatientProfile
+from django.db import IntegrityError
+from django.shortcuts import redirect, render
+
+from .forms import RegistrationForm
+from .models import PatientProfile, TherapistProfile
+
+logger = logging.getLogger(__name__)
 
 
 def login_view(request):
@@ -14,44 +22,20 @@ def login_view(request):
     # IMPORTANT: correct template path
     return render(request, "accounts/login.html", {"form": form})
 
-from django.contrib import messages
-from django.db import IntegrityError
-
 
 def register_view(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        role = request.POST.get("role")
+    form = RegistrationForm(request.POST or None)
 
-        # Basic validation
-        if not username or not password or not role:
-            messages.error(request, "All fields are required.")
-            return redirect("accounts:register")
-
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(
-                request,
-                "This username is already taken. Please choose another one."
-            )
-            return redirect("accounts:register")
-
+    if request.method == "POST" and form.is_valid():
         try:
-            user = User.objects.create_user(
-                username=username,
-                password=password,
-                role=role
-            )
+            user = form.save()
         except IntegrityError:
-            messages.error(
-                request,
-                "Something went wrong. Please try again."
-            )
+            logger.warning("Registration failed due to a database integrity error.")
+            messages.error(request, "Something went wrong. Please try again.")
             return redirect("accounts:register")
 
         # Create profile based on role
-        if role == "THERAPIST":
+        if user.role == "THERAPIST":
             TherapistProfile.objects.create(
                 user=user,
                 specialization="General"
@@ -62,8 +46,7 @@ def register_view(request):
         login(request, user)
         return redirect("appointment_list")
 
-    return render(request, "accounts/register.html")
-
+    return render(request, "accounts/register.html", {"form": form})
 
 
 def logout_view(request):

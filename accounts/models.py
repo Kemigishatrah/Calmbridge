@@ -22,7 +22,6 @@ class TherapistProfile(models.Model):
     offers_teletherapy = models.BooleanField(default=False, blank=True)
     location = models.CharField(max_length=100, blank=True)
 #practice details
-    availability = models.CharField(max_length=100, blank=True)
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='therapist_profiles/', null=True, blank=True)
     bio = models.TextField(max_length=1000, blank=True)

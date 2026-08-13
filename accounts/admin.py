@@ -15,7 +15,7 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(TherapistProfile)
 class TherapistProfileAdmin(admin.ModelAdmin):
     # Visibility: 'is_verified' is displayed prominently to track provider vetting progress
-    list_display = ('user', 'specialization', 'is_verified', 'years_of_experience', 'offers_teletherapy', 'hourly_rate', 'location', 'availability', 'language_proficiencies', 'qualifications', 'license_number', 'focus_areas', 'profile_picture', 'bio')
+    list_display = ('user', 'specialization', 'is_verified', 'years_of_experience', 'offers_teletherapy', 'hourly_rate', 'location', 'language_proficiencies', 'qualifications', 'license_number', 'focus_areas', 'profile_picture', 'bio')
     
     # Filter for unverified therapists to perform credential checks
     list_filter = ('is_verified',)

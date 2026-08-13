@@ -1,9 +1,17 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib.auth.decorators import login_required
+import logging
+
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render
-from .models import Appointment, AvailabilitySlot, SessionNote, TherapistAssignment,Message
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError, transaction
+from django.shortcuts import get_object_or_404, redirect, render
+
 from accounts.models import PatientProfile, TherapistProfile
+
+from .forms import AssignTherapistForm, AvailabilitySlotForm
+from .models import Appointment, AvailabilitySlot, Message, SessionNote, TherapistAssignment
+
+logger = logging.getLogger(__name__)
 
 @login_required
 def appointment_list(request):
@@ -64,17 +72,18 @@ def manage_availability(request):
         return render(request, "appointments/not_verified.html")
 
     if request.method == "POST":
-        slot_date = request.POST.get("date")
-        start_time = request.POST.get("start_time")
-        end_time = request.POST.get("end_time")
+        form = AvailabilitySlotForm(request.POST)
+        if form.is_valid():
+            slot = form.save(commit=False)
+            slot.therapist = therapist
+            try:
+                slot.save()
+            except IntegrityError:
+                messages.error(request, "You already have a slot at that date and time.")
+            return redirect("manage_availability")
 
-        AvailabilitySlot.objects.create(
-            therapist=therapist,
-            date=slot_date,
-            start_time=start_time,
-            end_time=end_time
-        )
-
+        for error in form.errors.values():
+            messages.error(request, " ".join(error))
         return redirect("manage_availability")
 
     slots = AvailabilitySlot.objects.filter(
@@ -94,17 +103,16 @@ def assign_therapist(request):
     therapists = TherapistProfile.objects.filter(is_verified=True)
 
     if request.method == "POST":
-        patient_id = request.POST.get("patient")
-        therapist_id = request.POST.get("therapist")
+        form = AssignTherapistForm(request.POST)
+        if form.is_valid():
+            TherapistAssignment.objects.update_or_create(
+                patient=form.cleaned_data["patient"],
+                defaults={"therapist": form.cleaned_data["therapist"], "is_active": True}
+            )
+            return redirect("assign_therapist")
 
-        patient = PatientProfile.objects.get(id=patient_id)
-        therapist = TherapistProfile.objects.get(id=therapist_id)
-
-        TherapistAssignment.objects.update_or_create(
-            patient=patient,
-            defaults={"therapist": therapist, "is_active": True}
-        )
-
+        for error in form.errors.values():
+            messages.error(request, " ".join(error))
         return redirect("assign_therapist")
 
     return render(
@@ -165,28 +173,36 @@ def book_session(request, slot_id):
     if not assignment:
         return render(request, "appointments/no_assignment.html")
 
-    slot = get_object_or_404(
-        AvailabilitySlot,
-        id=slot_id,
-        is_active=True
-    )
+    slot = get_object_or_404(AvailabilitySlot, id=slot_id)
 
     # Ensure slot belongs to assigned therapist
     if slot.therapist != assignment.therapist:
         return render(request, "appointments/not_allowed.html")
 
-    # Create appointment
-    Appointment.objects.create(
-        patient=user.patientprofile,
-        therapist=slot.therapist,
-        date=slot.date,
-        start_time=slot.start_time,
-        end_time=slot.end_time
-    )
+    with transaction.atomic():
+        # Atomically claim the slot via a conditional UPDATE: if two requests
+        # race for the same slot, only one WHERE is_active=True match succeeds
+        # (rowcount 0/1), so this holds even on SQLite where select_for_update
+        # is a no-op.
+        claimed = AvailabilitySlot.objects.filter(
+            id=slot.id, is_active=True
+        ).update(is_active=False)
 
-    # Lock the slot
-    slot.is_active = False
-    slot.save()
+        if not claimed:
+            messages.error(
+                request,
+                "Sorry, that slot was just booked by someone else. Please choose another time."
+            )
+            return redirect("available_sessions")
+
+        # Create appointment
+        Appointment.objects.create(
+            patient=user.patientprofile,
+            therapist=slot.therapist,
+            date=slot.date,
+            start_time=slot.start_time,
+            end_time=slot.end_time
+        )
 
     return render(
         request,
@@ -230,7 +246,7 @@ def appointment_messages(request, appointment_id):
             "messages": messages
         }
     )
-login_required
+@login_required
 def session_notes(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
     user = request.user
